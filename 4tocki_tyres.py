@@ -1,6 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
-
+import re
+import os
 # URL API для получения данных
 api_url = "https://b2b.4tochki.ru/export_data/M28274.xml"
 
