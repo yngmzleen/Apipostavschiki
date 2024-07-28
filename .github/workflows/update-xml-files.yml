@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests xml
+        pip install requests
 
     - name: Run 4tocki_tyres.py
       run: python 4tocki_tyres.py
