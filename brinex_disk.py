@@ -1,6 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
-
+import re
+import os
 # URL API для получения данных
 api_url = "https://abcdisk54.ru/ftp/Brinex_disk.xml"
 
