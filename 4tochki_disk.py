@@ -1,6 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
-
+import re
+import os
 # URL API для получения данных о дисках
 api_url_rims = "https://b2b.4tochki.ru/export_data/M28244.xml"
 
