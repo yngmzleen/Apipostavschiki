@@ -2,8 +2,8 @@ name: Update XML Files
 
 on:
   schedule:
-    # Ежедневно в 15:00 по Новосибирскому времени (UTC+7)
-    - cron: '0 8 * * *'
+    # Ежедневно в 10:00 по Новосибирскому времени (UTC+7)
+    - cron: '0 3 * * *'
   workflow_dispatch:
 
 jobs:
@@ -23,6 +23,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install requests
+
+    - name: Run zapaska_tyres.py
+      run: python zapaska_tyres.py
+
+    - name: Run zapaska_disk.py
+      run: python zapaska_disk.py
 
     - name: Run 4tocki_tyres.py
       run: python 4tocki_tyres.py
