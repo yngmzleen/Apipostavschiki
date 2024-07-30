@@ -37,16 +37,19 @@ fields_to_keep = {
     'season': 'season'
 }
 
-# Словарь для хранения цен из второй API
+# Словарь для хранения цен и остатков из второй API
 prices_dict = {}
+counts_dict = {}
 
-# Заполнение словаря цен из второй API
+# Заполнение словаря цен и остатков из второй API
 for item in root_2.findall('tyres'):
     nomenclature = item.find('Номенклатура').text
     price = item.find('Розничая_Цена').text
+    count = item.find('Остаток').text
     prices_dict[nomenclature] = price
+    counts_dict[nomenclature] = count
 
-# Копирование данных из первой API и добавление цен из второй API
+# Копирование данных из первой API и добавление цен и остатков из второй API
 for item in root_1.findall('tyres'):
     new_item = ET.SubElement(new_root, "item")
     
@@ -56,11 +59,14 @@ for item in root_1.findall('tyres'):
             new_element = ET.SubElement(new_item, fields_to_keep[field])
             new_element.text = element.text
     
-    # Добавление цены, если товар найден во второй API
+    # Добавление цены и остатка, если товар найден во второй API
     name = item.find('name').text
     if name in prices_dict:
         price_element = ET.SubElement(new_item, 'price')
         price_element.text = prices_dict[name]
+    if name in counts_dict:
+        count_element = ET.SubElement(new_item, 'count')
+        count_element.text = counts_dict[name]
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
