@@ -2,6 +2,7 @@ import requests
 import xml.etree.ElementTree as ET
 import re
 import os
+
 # URL API для получения данных о дисках
 api_url_rims = "https://b2b.4tochki.ru/export_data/M28244.xml"
 
@@ -23,7 +24,6 @@ new_root = ET.Element("items")
 # Поля, которые нужно сохранить
 fields_to_keep = {
     'cae': 'article',
-    'price_kaz_3_rozn': 'price',
     'brand': 'brand',
     'model': 'model',
     'color': 'color',
@@ -47,6 +47,12 @@ for item in root.findall('rims'):
     for element in item:
         if element.tag.startswith('rest_'):
             new_element = ET.SubElement(new_item, element.tag)
+            new_element.text = element.text
+
+    # Заменяем все поля, содержащие 'price_..._rozn', на 'price'
+    for element in item:
+        if element.tag.startswith('price_') and element.tag.endswith('_rozn'):
+            new_element = ET.SubElement(new_item, 'price')
             new_element.text = element.text
 
 # Запись данных в новый XML файл
