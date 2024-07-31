@@ -2,6 +2,7 @@ import requests
 import xml.etree.ElementTree as ET
 import re
 import os
+
 # URL API для получения данных
 api_url = "https://b2b.4tochki.ru/export_data/M28274.xml"
 
@@ -23,7 +24,6 @@ new_root = ET.Element("items")
 # Поля, которые нужно сохранить
 fields_to_keep = {
     'cae': 'article',
-    'price': 'price',
     'brand': 'brand',
     'model': 'model',
     'width': 'width',
@@ -49,6 +49,22 @@ for item in root.findall('tires'):
         if element.tag.startswith('rest_'):
             new_element = ET.SubElement(new_item, element.tag)
             new_element.text = element.text
+
+    # Добавляем розничную цену, если есть, иначе берем обычную цену
+    price_rozn = None
+    for element in item:
+        if '_rozn' in element.tag:
+            price_rozn = element
+            break
+
+    if price_rozn is not None:
+        new_price_element = ET.SubElement(new_item, 'price')
+        new_price_element.text = price_rozn.text
+    else:
+        price_element = item.find('price')
+        if price_element is not None and len(price_element) == 0:  # Проверка на отсутствие вложенных элементов
+            new_price_element = ET.SubElement(new_item, 'price')
+            new_price_element.text = price_element.text
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
