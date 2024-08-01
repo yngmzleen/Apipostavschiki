@@ -36,20 +36,25 @@ fields_to_keep = {
     'color': 'color'
 }
 
-# Словарь для хранения цен из второй API
+# Словарь для хранения цен и остатков из второй API
 prices_dict = {}
+counts_dict = {}
 
-# Заполнение словаря цен из второй API
+# Заполнение словаря цен и остатков из второй API
 for item in root_2.findall('disk'):
     code_element = item.find('Код')
     if code_element is not None:
         code = code_element.text
         price_element = item.find('Розничая_Цена')
+        count_element = item.find('Остаток')
         if price_element is not None:
             price = price_element.text
             prices_dict[code] = price
+        if count_element is not None:
+            count = count_element.text
+            counts_dict[code] = count
 
-# Копирование данных из первой API и добавление цен из второй API
+# Копирование данных из первой API и добавление цен и остатков из второй API
 for item in root_1.findall('disk'):
     new_item = ET.SubElement(new_root, "item")
     
@@ -59,13 +64,16 @@ for item in root_1.findall('disk'):
             new_element = ET.SubElement(new_item, fields_to_keep[field])
             new_element.text = element.text
     
-    # Добавление цены, если товар найден во второй API
+    # Добавление цены и остатка, если товар найден во второй API
     code_element = item.find('code')
     if code_element is not None:
         code = code_element.text
         if code in prices_dict:
             price_element = ET.SubElement(new_item, 'price')
             price_element.text = prices_dict[code]
+        if code in counts_dict:
+            count_element = ET.SubElement(new_item, 'count')
+            count_element.text = counts_dict[code]
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
