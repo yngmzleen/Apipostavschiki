@@ -34,7 +34,8 @@ fields_to_keep = {
     'shirina_diska': 'width',
     'radius': 'diameter',
     'et': 'et',
-    'DescriptionOfColor': 'color'
+    'DescriptionOfColor': 'color',
+    'vendor_code': 'cae'
 }
 
 # Копирование данных из исходного XML
