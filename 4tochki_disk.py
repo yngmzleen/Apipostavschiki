@@ -1,7 +1,6 @@
 import requests
 import xml.etree.ElementTree as ET
 import re
-import os
 
 # URL API для получения данных о дисках
 api_url_rims = "https://b2b.4tochki.ru/export_data/M28244.xml"
@@ -42,7 +41,11 @@ for item in root.findall('rims'):
         element = item.find(field)
         if element is not None:
             new_element = ET.SubElement(new_item, fields_to_keep[field])
-            new_element.text = element.text
+            if field == 'cae':
+                # Удаляем буквы "WHS" из значения поля <cae>
+                new_element.text = re.sub(r'WHS', '', element.text)
+            else:
+                new_element.text = element.text
 
     # Добавляем все поля, содержащие 'rest_'
     for element in item:
