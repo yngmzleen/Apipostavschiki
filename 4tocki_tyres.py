@@ -31,7 +31,8 @@ fields_to_keep = {
     'diameter': 'diameter',
     'season': 'season',
     'img_small': 'img_small',
-    'name': 'name'
+    'name': 'name',
+    'cae': 'cae'
 }
 
 # Копирование данных из исходного XML
