@@ -34,7 +34,8 @@ fields_to_keep = {
     'diameter': 'diameter',
     'height': 'height',
     'width': 'width',
-    'season': 'season'
+    'season': 'season',
+    'vendor_code': 'cae'
 }
 
 # Словарь для хранения цен и остатков из второй API
