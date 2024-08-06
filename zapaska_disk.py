@@ -33,7 +33,8 @@ fields_to_keep = {
     'code': 'article',
     'width': 'width',
     'diameter': 'diameter',
-    'color': 'color'
+    'color': 'color',
+    'vendor_code': 'cae'
 }
 
 # Словарь для хранения цен и остатков из второй API
