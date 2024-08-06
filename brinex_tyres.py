@@ -1,7 +1,6 @@
 import requests
 import xml.etree.ElementTree as ET
-import re
-import os
+
 # URL API для получения данных
 api_url = "https://abcdisk54.ru/ftp/Brinex_shina.xml"
 
@@ -17,9 +16,6 @@ response.raise_for_status()  # Проверка успешности запро�
 # Парсинг XML данных
 root = ET.fromstring(response.content)
 
-# Проверка содержимого root
-print("Корневой элемент:", root.tag)
-
 # Создание нового корневого элемента для нового XML файла
 new_root = ET.Element("items")
 
@@ -34,7 +30,8 @@ fields_to_keep = {
     'shirina_secheniya': 'width',
     'visota_secheniya': 'height',
     'radius': 'diameter',
-    'seasonality': 'season'
+    'seasonality': 'season',
+    'vendor_code': 'cae'  # Добавляем поле vendor_code и переименовываем его в cae
 }
 
 # Копирование данных из исходного XML
