@@ -30,7 +30,8 @@ fields_to_keep = {
     'width': 'width',
     'diameter': 'diameter',
     'img_small': 'img_small',
-    'name': 'name'
+    'name': 'name',
+    'cae': 'cae'
 }
 
 # Копирование данных из исходного XML
