@@ -68,6 +68,11 @@ for item in root_1.findall('tyres'):
     if name in counts_dict:
         count_element = ET.SubElement(new_item, 'count')
         count_element.text = counts_dict[name]
+    
+    # Проверка наличия слова "шип" в поле <name> и добавление поля <spikes>шипы</spikes>
+    if re.search(r'\bшип\b', name, re.IGNORECASE):
+        spikes_element = ET.SubElement(new_item, 'spikes')
+        spikes_element.text = 'шипы'
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
