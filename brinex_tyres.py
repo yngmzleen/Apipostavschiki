@@ -43,6 +43,12 @@ for item in root.findall('.//item'):
         if element is not None:
             new_element = ET.SubElement(new_item, fields_to_keep[field])
             new_element.text = element.text
+    
+    # Проверка наличия поля <spikes>Да</spikes> и добавление поля <spikes>шипы</spikes>
+    spikes_element = item.find('spikes')
+    if spikes_element is not None and spikes_element.text == 'Да':
+        new_spikes_element = ET.SubElement(new_item, 'spikes')
+        new_spikes_element.text = 'шипы'
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
