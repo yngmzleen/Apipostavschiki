@@ -67,6 +67,12 @@ for item in root.findall('tires'):
             new_price_element = ET.SubElement(new_item, 'price')
             new_price_element.text = price_element.text
 
+    # Проверка наличия поля <thorn>Да</thorn> и добавление поля <spikes>шипы</spikes>
+    thorn_element = item.find('thorn')
+    if thorn_element is not None and thorn_element.text == 'Да':
+        new_spikes_element = ET.SubElement(new_item, 'spikes')
+        new_spikes_element.text = 'шипы'
+
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
 tree.write("4tochki_tyres.xml", encoding="utf-8", xml_declaration=True)
