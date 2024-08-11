@@ -1,6 +1,5 @@
 import requests
 import xml.etree.ElementTree as ET
-import re
 import os
 
 # URL API для получения данных о дисках
@@ -34,7 +33,12 @@ fields_to_keep = {
     'width': 'width',
     'diameter': 'diameter',
     'color': 'color',
-    'vendor_code': 'cae'
+    'vendor_code': 'cae',
+    'holes': 'holes',
+    'ET': 'et',
+    'diam_holes': 'diam_holes',
+    'type': 'type',
+    'diam_center': 'diam_center'
 }
 
 # Словарь для хранения цен и остатков из второй API
