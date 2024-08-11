@@ -2,6 +2,7 @@ import requests
 import xml.etree.ElementTree as ET
 import re
 import os
+
 # URL API для получения данных
 api_url = "https://abcdisk54.ru/ftp/Brinex_disk.xml"
 
@@ -35,7 +36,10 @@ fields_to_keep = {
     'radius': 'diameter',
     'et': 'et',
     'DescriptionOfColor': 'color',
-    'vendor_code': 'cae'
+    'vendor_code': 'cae',
+    'material': 'type',
+    'boltnum': 'holes',
+    'boltdistance': 'diam_holes',
 }
 
 # Копирование данных из исходного XML
@@ -47,6 +51,16 @@ for item in root.findall('.//item'):
         if element is not None:
             new_element = ET.SubElement(new_item, fields_to_keep[field])
             new_element.text = element.text
+
+    # Извлечение значения после "CB" и до пробела из поля <name>
+    name_element = item.find('name')
+    if name_element is not None:
+        name_text = name_element.text
+        match = re.search(r'CB(\d+\.\d+)', name_text)
+        if match:
+            diam_center_value = match.group(1)
+            diam_center_element = ET.SubElement(new_item, 'diam_center')
+            diam_center_element.text = diam_center_value
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
