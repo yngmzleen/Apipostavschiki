@@ -30,7 +30,12 @@ fields_to_keep = {
     'diameter': 'diameter',
     'img_small': 'img_small',
     'name': 'name',
-    'cae': 'cae'
+    'cae': 'cae',
+    'bolts_count': 'holes',
+    'bolts_spacing': 'diam_holes',
+    'et': 'et',
+    'rim_type': 'type',
+    'dia': 'diam_center'
 }
 
 # Копирование данных из исходного XML
