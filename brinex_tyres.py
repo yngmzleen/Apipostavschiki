@@ -31,7 +31,8 @@ fields_to_keep = {
     'visota_secheniya': 'height',
     'radius': 'diameter',
     'seasonality': 'season',
-    'vendor_code': 'cae'  # Добавляем поле vendor_code и переименовываем его в cae
+    'vendor_code': 'cae',
+    'categoryname': 'model'
 }
 
 # Копирование данных из исходного XML
