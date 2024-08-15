@@ -40,6 +40,7 @@ fields_to_keep = {
     'material': 'type',
     'boltnum': 'holes',
     'boltdistance': 'diam_holes',
+    'categoryname': 'model'
 }
 
 # Копирование данных из исходного XML
