@@ -3,7 +3,7 @@ name: Update XML Files
 on:
   schedule:
     # Ежедневно в 10:00 по Новосибирскому времени (UTC+7)
-    - cron: '0 3 * * *'
+    - cron: '0 13 * * *'
   workflow_dispatch:
 
 jobs:
