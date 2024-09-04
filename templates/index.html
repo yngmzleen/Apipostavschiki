@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Диски</title>
+</head>
+<body>
+    <h1>Диски</h1>
+    <ul>
+        {% for rim in data %}
+            <li>
+                {{ rim['name'] }} ({{ rim['brand'] }}, {{ rim['model'] }}, {{ rim['color'] }}, {{ rim['width'] }}x{{ rim['diameter'] }}, ET{{ rim['et'] }}, {{ rim['dia'] }}, {{ rim['mount'] }})
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
