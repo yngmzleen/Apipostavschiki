@@ -32,7 +32,8 @@ fields_to_keep = {
     'radius': 'diameter',
     'seasonality': 'season',
     'vendor_code': 'cae',
-    'categoryname': 'model'
+    'categoryname': 'model',
+    'priceOpt': 'opt'
 }
 
 # Копирование данных из исходного XML
