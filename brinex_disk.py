@@ -41,6 +41,7 @@ fields_to_keep = {
     'boltnum': 'holes',
     'boltdistance': 'diam_holes',
     'categoryname': 'model'
+    'priceOpt': 'opt'
 }
 
 # Копирование данных из исходного XML
