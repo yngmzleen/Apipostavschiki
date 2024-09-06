@@ -6,6 +6,11 @@ import os
 # URL API для получения данных о шинах
 api_url_tyres_1 = "https://ka2.sibzapaska.ru/export.xml"
 api_url_tyres_2 = "https://yngmzleen.github.io/drom/products.xml"
+api_url_product = "http://ka2.sibzapaska.ru/API/hs/v1/product"
+
+# Учетные данные для API
+username = "API_client"
+password = "rWp7mFWXRKOq"
 
 # Заголовки для запроса (если необходимо)
 headers = {
@@ -17,10 +22,13 @@ response_1 = requests.get(api_url_tyres_1, headers=headers, verify=False)
 response_1.raise_for_status()  # Проверка успешности запроса
 response_2 = requests.get(api_url_tyres_2, headers=headers, verify=False)
 response_2.raise_for_status()  # Проверка успешности запроса
+response_product = requests.get(api_url_product, auth=(username, password))
+response_product.raise_for_status()  # Проверка успешности запроса
 
 # Парсинг XML данных
 root_1 = ET.fromstring(response_1.content)
 root_2 = ET.fromstring(response_2.content)
+product_data = response_product.json()
 
 # Создание нового корневого элемента для нового XML файла
 new_root = ET.Element("items")
@@ -50,6 +58,16 @@ for item in root_2.findall('tyres'):
     prices_dict[nomenclature] = price
     counts_dict[nomenclature] = count
 
+# Словарь для хранения оптовых цен из третьей API
+wholesale_prices_dict = {}
+
+# Заполнение словаря оптовых цен из третьей API
+for product in product_data:
+    code = product.get('Код')
+    wholesale_price = product.get('Оптовая_Цена')
+    if code and wholesale_price:
+        wholesale_prices_dict[code] = wholesale_price
+
 # Копирование данных из первой API и добавление цен и остатков из второй API
 for item in root_1.findall('tyres'):
     new_item = ET.SubElement(new_root, "item")
@@ -73,6 +91,12 @@ for item in root_1.findall('tyres'):
     if re.search(r'\bшип\b', name, re.IGNORECASE):
         spikes_element = ET.SubElement(new_item, 'spikes')
         spikes_element.text = 'шипы'
+    
+    # Добавление оптовой цены, если товар найден в третьей API
+    code = item.find('code').text
+    if code in wholesale_prices_dict:
+        opt_element = ET.SubElement(new_item, 'opt')
+        opt_element.text = wholesale_prices_dict[code]
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
