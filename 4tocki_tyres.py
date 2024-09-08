@@ -32,7 +32,8 @@ fields_to_keep = {
     'season': 'season',
     'img_small': 'img_small',
     'name': 'name',
-    'cae': 'cae'
+    'cae': 'cae',
+    'price': 'price'
 }
 
 # Копирование данных из исходного XML
@@ -72,6 +73,15 @@ for item in root.findall('tires'):
     if thorn_element is not None and thorn_element.text == 'Да':
         new_spikes_element = ET.SubElement(new_item, 'spikes')
         new_spikes_element.text = 'шипы'
+
+    # Добавляем поля, содержащие 'price_', но не 'price_..._rozn' и не 'price', как 'opt'
+    opt_added = False
+    for element in item:
+        if element.tag.startswith('price_') and not element.tag.endswith('_rozn') and element.tag != 'price':
+            if not opt_added:
+                new_element = ET.SubElement(new_item, 'opt')
+                new_element.text = element.text
+                opt_added = True
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
