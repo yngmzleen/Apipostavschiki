@@ -54,6 +54,7 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add .
         git commit -m "Update XML files"
+        git pull --rebase
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
