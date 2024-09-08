@@ -48,11 +48,21 @@ jobs:
     - name: Run zapaska_gruz.py
       run: python zapaska_gruz.py
 
+    - name: Check for changes
+      id: changes
+      run: |
+        git add .
+        if git diff-index --quiet HEAD; then
+          echo "::set-output name=has_changes::false"
+        else
+          echo "::set-output name=has_changes::true"
+        fi
+
     - name: Commit and push changes
+      if: steps.changes.outputs.has_changes == 'true'
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add .
         git commit -m "Update XML files"
         git pull --rebase
         git push
