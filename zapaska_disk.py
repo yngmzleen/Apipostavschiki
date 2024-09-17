@@ -1,6 +1,15 @@
-import requests
 import xml.etree.ElementTree as ET
+import requests
 import os
+import logging
+import warnings
+import json
+
+# Отключение предупреждений о небезопасных запросах
+warnings.filterwarnings("ignore", message="Unverified HTTPS request")
+
+# Настройка логирования
+logging.basicConfig(level=logging.INFO)
 
 # URL API для получения данных о дисках
 api_url_disks_1 = "https://ka2.sibzapaska.ru/export.xml"
@@ -17,17 +26,39 @@ headers = {
 }
 
 # Получение данных из API
-response_1 = requests.get(api_url_disks_1, headers=headers, verify=False)
-response_1.raise_for_status()  # Проверка успешности запроса
-response_2 = requests.get(api_url_disks_2, headers=headers, verify=False)
-response_2.raise_for_status()  # Проверка успешности запроса
-response_product = requests.get(api_url_product, auth=(username, password))
-response_product.raise_for_status()  # Проверка успешности запроса
+def fetch_data(url, auth=None):
+    try:
+        response = requests.get(url, headers=headers, auth=auth, verify=False)
+        response.raise_for_status()
+        return response.content
+    except requests.RequestException as e:
+        logging.error(f"Ошибка при запросе данных: {e}")
+        return None
 
 # Парсинг XML данных
-root_1 = ET.fromstring(response_1.content)
-root_2 = ET.fromstring(response_2.content)
-product_data = response_product.json()
+def parse_xml(xml_content):
+    if xml_content:
+        return ET.fromstring(xml_content)
+    return None
+
+# Парсинг JSON данных
+def parse_json(json_content):
+    if json_content:
+        return json.loads(json_content)
+    return None
+
+# Получение данных из API
+response_1_content = fetch_data(api_url_disks_1)
+response_2_content = fetch_data(api_url_disks_2)
+response_product_content = fetch_data(api_url_product, auth=(username, password))
+
+if not all([response_1_content, response_2_content, response_product_content]):
+    logging.error("Не удалось получить данные из одного или нескольких API")
+    exit(1)
+
+root_1 = parse_xml(response_1_content)
+root_2 = parse_xml(response_2_content)
+product_data = parse_json(response_product_content)
 
 # Создание нового корневого элемента для нового XML файла
 new_root = ET.Element("items")
@@ -105,6 +136,7 @@ for item in root_1.findall('disk'):
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
-tree.write("zapaska_disks.xml", encoding="utf-8", xml_declaration=True)
+output_file = "zapaska_disks.xml"
+tree.write(output_file, encoding="utf-8", xml_declaration=True)
 
-print("Новый XML файл для дисков успешно создан.")
+logging.info(f"Новый XML файл для дисков успешно создан: {output_file}")
