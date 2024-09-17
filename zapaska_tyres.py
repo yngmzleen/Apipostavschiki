@@ -2,6 +2,15 @@ import xml.etree.ElementTree as ET
 import requests
 import re
 import os
+import logging
+import warnings
+import json
+
+# Отключение предупреждений о небезопасных запросах
+warnings.filterwarnings("ignore", message="Unverified HTTPS request")
+
+# Настройка логирования
+logging.basicConfig(level=logging.INFO)
 
 # URL API для получения данных о шинах
 api_url_tyres_1 = "https://ka2.sibzapaska.ru/export.xml"
@@ -18,17 +27,39 @@ headers = {
 }
 
 # Получение данных из API
-response_1 = requests.get(api_url_tyres_1, headers=headers, verify=False)
-response_1.raise_for_status()  # Проверка успешности запроса
-response_2 = requests.get(api_url_tyres_2, headers=headers, verify=False)
-response_2.raise_for_status()  # Проверка успешности запроса
-response_product = requests.get(api_url_product, auth=(username, password))
-response_product.raise_for_status()  # Проверка успешности запроса
+def fetch_data(url, auth=None):
+    try:
+        response = requests.get(url, headers=headers, auth=auth, verify=False)
+        response.raise_for_status()
+        return response.content
+    except requests.RequestException as e:
+        logging.error(f"Ошибка при запросе данных: {e}")
+        return None
 
 # Парсинг XML данных
-root_1 = ET.fromstring(response_1.content)
-root_2 = ET.fromstring(response_2.content)
-product_data = response_product.json()
+def parse_xml(xml_content):
+    if xml_content:
+        return ET.fromstring(xml_content)
+    return None
+
+# Парсинг JSON данных
+def parse_json(json_content):
+    if json_content:
+        return json.loads(json_content)
+    return None
+
+# Получение данных из API
+response_1_content = fetch_data(api_url_tyres_1)
+response_2_content = fetch_data(api_url_tyres_2)
+response_product_content = fetch_data(api_url_product, auth=(username, password))
+
+if not all([response_1_content, response_2_content, response_product_content]):
+    logging.error("Не удалось получить данные из одного или нескольких API")
+    exit(1)
+
+root_1 = parse_xml(response_1_content)
+root_2 = parse_xml(response_2_content)
+product_data = parse_json(response_product_content)
 
 # Создание нового корневого элемента для нового XML файла
 new_root = ET.Element("items")
@@ -52,11 +83,13 @@ counts_dict = {}
 
 # Заполнение словаря цен и остатков из второй API
 for item in root_2.findall('tyres'):
-    nomenclature = item.find('Номенклатура').text
-    price = item.find('Розничая_Цена').text
-    count = item.find('Остаток').text
-    prices_dict[nomenclature] = price
-    counts_dict[nomenclature] = count
+    nomenclature = item.find('Номенклатура').text if item.find('Номенклатура') is not None else None
+    price = item.find('Розничая_Цена').text if item.find('Розничая_Цена') is not None else None
+    count = item.find('Остаток').text if item.find('Остаток') is not None else None
+    if nomenclature and price:
+        prices_dict[nomenclature] = price
+    if nomenclature and count:
+        counts_dict[nomenclature] = count
 
 # Словарь для хранения оптовых цен из третьей API
 wholesale_prices_dict = {}
@@ -79,27 +112,28 @@ for item in root_1.findall('tyres'):
             new_element.text = element.text
     
     # Добавление цены и остатка, если товар найден во второй API
-    name = item.find('name').text
-    if name in prices_dict:
+    name = item.find('name').text if item.find('name') is not None else None
+    if name and name in prices_dict:
         price_element = ET.SubElement(new_item, 'price')
         price_element.text = prices_dict[name]
-    if name in counts_dict:
+    if name and name in counts_dict:
         count_element = ET.SubElement(new_item, 'count')
         count_element.text = counts_dict[name]
     
     # Проверка наличия слова "шип" в поле <name> и добавление поля <spikes>шипы</spikes>
-    if re.search(r'\bшип\b', name, re.IGNORECASE):
+    if name and re.search(r'\bшип\b', name, re.IGNORECASE):
         spikes_element = ET.SubElement(new_item, 'spikes')
         spikes_element.text = 'шипы'
     
     # Добавление оптовой цены, если товар найден в третьей API
-    code = item.find('code').text
-    if code in wholesale_prices_dict:
+    code = item.find('code').text if item.find('code') is not None else None
+    if code and code in wholesale_prices_dict:
         opt_element = ET.SubElement(new_item, 'opt')
         opt_element.text = wholesale_prices_dict[code]
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
-tree.write("zapaska_tyres.xml", encoding="utf-8", xml_declaration=True)
+output_file = "zapaska_tyres.xml"
+tree.write(output_file, encoding="utf-8", xml_declaration=True)
 
-print("Новый XML файл для шин успешно создан.")
+logging.info(f"Новый XML файл для шин успешно создан: {output_file}")
