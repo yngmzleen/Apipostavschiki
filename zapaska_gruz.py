@@ -71,7 +71,7 @@ for product in product_data:
 # Копирование данных из первой API и добавление цен и остатков из второй API
 for item in root_1.findall('tyres'):
     load_index = item.find('load_index')
-    if load_index is not None and re.match(r'^\d{2,3}/\d{2,3}$', load_index.text):
+    if load_index is not None and load_index.text is not None and re.match(r'^\d{2,3}/\d{2,3}$', load_index.text):
         new_item = ET.SubElement(new_root, "item")
         
         for field in fields_to_keep:
