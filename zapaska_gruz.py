@@ -43,8 +43,7 @@ fields_to_keep = {
     'height': 'height',
     'width': 'width',
     'season': 'season',
-    'vendor_code': 'cae',
-    'load_index': 'load_index'
+    'vendor_code': 'cae'
 }
 
 # Словарь для хранения цен и остатков из второй API
@@ -72,7 +71,7 @@ for product in product_data:
 # Копирование данных из первой API и добавление цен и остатков из второй API
 for item in root_1.findall('tyres'):
     load_index = item.find('load_index')
-    if load_index is not None and load_index.text is not None and re.match(r'^\d{2,3}/\d{2,3}$', load_index.text):
+    if load_index is not None and re.match(r'^\d{2,3}/\d{2,3}$', load_index.text):
         new_item = ET.SubElement(new_root, "item")
         
         for field in fields_to_keep:
@@ -103,6 +102,6 @@ for item in root_1.findall('tyres'):
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
-tree.write("zapaska_tyres.xml", encoding="utf-8", xml_declaration=True)
+tree.write("zapaska_gruz.xml", encoding="utf-8", xml_declaration=True)
 
 print("Новый XML файл для шин успешно создан.")
