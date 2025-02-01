@@ -24,7 +24,7 @@ fields_to_keep = {
     'id': 'article',
     'name': 'name',
     'price': 'price',
-    'countAll': 'count',
+    'countAll': 'rest',
     'stockName': 'stock',
     'brand': 'brand',
     'shirina_secheniya': 'width',
