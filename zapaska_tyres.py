@@ -13,7 +13,6 @@ warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 logging.basicConfig(level=logging.INFO)
 
 # URL API для получения данных о шинах
-api_url_tyres_1 = "https://ka2.sibzapaska.ru/export.xml"
 api_url_tyres_2 = "https://yngmzleen.github.io/drom/tyres.xml"
 api_url_product = "https://ka2.sibzapaska.ru:16500/API/hs/V2/GetTires"
 
