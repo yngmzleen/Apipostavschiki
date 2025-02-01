@@ -1,24 +1,16 @@
 import xml.etree.ElementTree as ET
 import requests
+import re
 import os
 import logging
 import warnings
 import json
 
-# Отключение предупреждений о небезопасных запросах
-warnings.filterwarnings("ignore", message="Unverified HTTPS request")
-
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
 # URL API для получения данных о дисках
-api_url_disks_1 = "https://example.com/disks.xml"  # Замените на реальный URL
-api_url_disks_2 = "https://yngmzleen.github.io/drom/disks.xml"
-api_url_product = "https://ka2.sibzapaska.ru:16500/API/hs/V2/GetDisk"
-
-# Учетные данные для API
-username = "API_client"
-password = "rWp7mFWXRKOq"
+api_url = "https://yngmzleen.github.io/drom/disks.xml"
 
 # Заголовки для запроса (если необходимо)
 headers = {
@@ -26,10 +18,10 @@ headers = {
 }
 
 # Получение данных из API
-def fetch_data(url, auth=None):
+def fetch_data(url):
     try:
-        response = requests.get(url, headers=headers, auth=auth, verify=False)
-        response.raise_for_status()
+        response = requests.get(url, headers=headers, verify=False)
+        response.raise_for_status()  # Проверка успешности запроса
         return response.content
     except requests.RequestException as e:
         logging.error(f"Ошибка при запросе данных: {e}")
@@ -45,31 +37,16 @@ def parse_xml(xml_content):
             return None
     return None
 
-# Парсинг JSON данных
-def parse_json(json_content):
-    if json_content:
-        try:
-            return json.loads(json_content)
-        except json.JSONDecodeError as e:
-            logging.error(f"Ошибка при парсинге JSON: {e}")
-            return None
-    return None
-
 # Получение данных из API
-response_1_content = fetch_data(api_url_disks_1)
-response_2_content = fetch_data(api_url_disks_2)
-response_product_content = fetch_data(api_url_product, auth=(username, password))
-
-if not all([response_1_content, response_2_content, response_product_content]):
-    logging.error("Не удалось получить данные из одного или нескольких API")
+response_content = fetch_data(api_url)
+if not response_content:
+    logging.error("Не удалось получить данные из API")
     exit(1)
 
-root_1 = parse_xml(response_1_content)
-root_2 = parse_xml(response_2_content)
-product_data = parse_json(response_product_content)
-
-if not all([root_1, root_2, product_data]):
-    logging.error("Не удалось распарсить данные из одного или нескольких API")
+# Парсинг XML
+root = parse_xml(response_content)
+if not root:
+    logging.error("Не удалось распарсить данные из API")
     exit(1)
 
 # Создание нового корневого элемента для нового XML файла
@@ -78,80 +55,35 @@ new_root = ET.Element("items")
 # Поля, которые нужно сохранить и их новые названия
 fields_to_keep = {
     'name': 'name',
+    'retail': 'price',  # Поле "retail" в исходных данных
+    'rest': 'rest',         # Поле "rest" в исходных данных
     'brand': 'brand',
     'model': 'model',
-    'code': 'article',
+    'code': 'article',         # Поле "article" в исходных данных
     'width': 'width',
     'diameter': 'diameter',
     'color': 'color',
-    'vendor_code': 'cae',
-    'holes': 'holes',
-    'ET': 'et',
-    'diam_holes': 'diam_holes',
+    'vendor_code': 'cae',      # Поле "cae" в исходных данных
+    'diam_holes': 'holes',     # Поле "diam_holes" в исходных данных
+    'ET': 'et',                # Поле "ET" в исходных данных
+    'holes': 'holes',          # Поле "holes" в исходных данных
     'type': 'type',
     'diam_center': 'diam_center'
 }
 
-# Словарь для хранения цен и остатков из второй API
-prices_dict = {}
-counts_dict = {}
-
-# Заполнение словаря цен и остатков из второй API
-for item in root_2.findall('disk'):
-    code_element = item.find('Код')
-    if code_element is not None:
-        code = code_element.text
-        price_element = item.find('Розничая_Цена')
-        count_element = item.find('Остаток')
-        if price_element is not None:
-            price = price_element.text
-            prices_dict[code] = price
-        if count_element is not None:
-            count = count_element.text
-            counts_dict[code] = count
-
-# Словарь для хранения оптовых цен из третьей API
-wholesale_prices_dict = {}
-
-# Заполнение словаря оптовых цен из третьей API
-if isinstance(product_data, list):
-    for product in product_data:
-        code = product.get('Код')
-        wholesale_price = product.get('Оптовая_Цена')
-        if code and wholesale_price:
-            wholesale_prices_dict[code] = wholesale_price
-else:
-    logging.warning("Данные из третьего API не являются списком")
-
-# Копирование данных из первой API и добавление цен и остатков из второй API
-for item in root_1.findall('disk'):
+# Копирование данных из API и нормализация полей
+for item in root.findall('Product'):
     new_item = ET.SubElement(new_root, "item")
     
-    for field in fields_to_keep:
+    for field, new_field in fields_to_keep.items():
         element = item.find(field)
         if element is not None and element.text is not None:
-            new_element = ET.SubElement(new_item, fields_to_keep[field])
-            new_element.text = element.text
-    
-    # Добавление цены и остатка, если товар найден во второй API
-    code_element = item.find('code')
-    if code_element is not None:
-        code = code_element.text
-        if code in prices_dict:
-            price_element = ET.SubElement(new_item, 'price')
-            price_element.text = prices_dict[code]
-        if code in counts_dict:
-            count_element = ET.SubElement(new_item, 'count')
-            count_element.text = counts_dict[code]
-    
-    # Добавление оптовой цены, если товар найден в третьей API
-    if code in wholesale_prices_dict:
-        opt_element = ET.SubElement(new_item, 'opt')
-        opt_element.text = wholesale_prices_dict[code]
+            new_element = ET.SubElement(new_item, new_field)
+            new_element.text = element.text.strip()
 
 # Запись данных в новый XML файл
 tree = ET.ElementTree(new_root)
 output_file = "zapaska_disks.xml"
 tree.write(output_file, encoding="utf-8", xml_declaration=True)
 
-logging.info(f"Новый XML файл для дисков успешно создан: {output_file}")
+logging.info(f"Новый XML файл с нормализованными данными успешно создан: {output_file}")
