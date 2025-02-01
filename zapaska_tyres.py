@@ -54,7 +54,7 @@ new_root = ET.Element("items")
 
 # Поля, которые нужно сохранить и их новые названия
 fields_to_keep = {
-    'cae': 'cae',
+    'article': 'cae',
     'name': 'name',
     'retail': 'price',
     'rest': 'rest',
