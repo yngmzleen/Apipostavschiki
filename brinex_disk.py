@@ -29,7 +29,7 @@ fields_to_keep = {
     'product_id': 'article',
     'name': 'name',
     'price': 'price',
-    'countAll': 'count',
+    'countAll': 'rest',
     'stockName': 'stock',
     'proizvoditel': 'brand',
     'shirina_diska': 'width',
