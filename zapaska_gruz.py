@@ -4,9 +4,8 @@ import re
 import os
 
 # URL API для получения данных о шинах
-api_url_tyres_1 = "https://ka2.sibzapaska.ru/export.xml"
 api_url_tyres_2 = "https://yngmzleen.github.io/drom/products.xml"
-api_url_product = "http://ka2.sibzapaska.ru/API/hs/v1/product"
+api_url_product = "https://ka2.sibzapaska.ru:16500/API/hs/V2/GetTires"
 
 # Учетные данные для API
 username = "API_client"
