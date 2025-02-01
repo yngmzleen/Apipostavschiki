@@ -12,6 +12,7 @@ warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 logging.basicConfig(level=logging.INFO)
 
 # URL API для получения данных о дисках
+api_url_disks_1 = "https://example.com/disks.xml"  # Замените на реальный URL
 api_url_disks_2 = "https://yngmzleen.github.io/drom/disks.xml"
 api_url_product = "https://ka2.sibzapaska.ru:16500/API/hs/V2/GetDisk"
 
@@ -37,13 +38,21 @@ def fetch_data(url, auth=None):
 # Парсинг XML данных
 def parse_xml(xml_content):
     if xml_content:
-        return ET.fromstring(xml_content)
+        try:
+            return ET.fromstring(xml_content)
+        except ET.ParseError as e:
+            logging.error(f"Ошибка при парсинге XML: {e}")
+            return None
     return None
 
 # Парсинг JSON данных
 def parse_json(json_content):
     if json_content:
-        return json.loads(json_content)
+        try:
+            return json.loads(json_content)
+        except json.JSONDecodeError as e:
+            logging.error(f"Ошибка при парсинге JSON: {e}")
+            return None
     return None
 
 # Получение данных из API
@@ -58,6 +67,10 @@ if not all([response_1_content, response_2_content, response_product_content]):
 root_1 = parse_xml(response_1_content)
 root_2 = parse_xml(response_2_content)
 product_data = parse_json(response_product_content)
+
+if not all([root_1, root_2, product_data]):
+    logging.error("Не удалось распарсить данные из одного или нескольких API")
+    exit(1)
 
 # Создание нового корневого элемента для нового XML файла
 new_root = ET.Element("items")
@@ -101,11 +114,14 @@ for item in root_2.findall('disk'):
 wholesale_prices_dict = {}
 
 # Заполнение словаря оптовых цен из третьей API
-for product in product_data:
-    code = product.get('Код')
-    wholesale_price = product.get('Оптовая_Цена')
-    if code and wholesale_price:
-        wholesale_prices_dict[code] = wholesale_price
+if isinstance(product_data, list):
+    for product in product_data:
+        code = product.get('Код')
+        wholesale_price = product.get('Оптовая_Цена')
+        if code and wholesale_price:
+            wholesale_prices_dict[code] = wholesale_price
+else:
+    logging.warning("Данные из третьего API не являются списком")
 
 # Копирование данных из первой API и добавление цен и остатков из второй API
 for item in root_1.findall('disk'):
@@ -113,7 +129,7 @@ for item in root_1.findall('disk'):
     
     for field in fields_to_keep:
         element = item.find(field)
-        if element is not None:
+        if element is not None and element.text is not None:
             new_element = ET.SubElement(new_item, fields_to_keep[field])
             new_element.text = element.text
     
