@@ -26,6 +26,7 @@ new_root = ET.Element("items")
 
 # Поля, которые нужно сохранить
 fields_to_keep = {
+    'id': 'id',
     'product_id': 'article',
     'name': 'name',
     'price': 'price',
