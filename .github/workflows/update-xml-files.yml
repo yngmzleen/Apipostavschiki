@@ -39,6 +39,8 @@ jobs:
     - name: Run 4tochki_disk.py
       run: python 4tochki_disk.py
       continue-on-error: true
+      env:
+          FORTOCHKI_D: ${{ secrets.FORTOCHKI_D }}
 
     - name: Run brinex_tyres.py
       run: python brinex_tyres.py
