@@ -26,27 +26,35 @@ jobs:
 
     - name: Run zapaska_tyres.py
       run: python zapaska_tyres.py
+      continue-on-error: true
 
     - name: Run zapaska_disk.py
       run: python zapaska_disk.py
+      continue-on-error: true
 
     - name: Run 4tocki_tyres.py
       run: python 4tocki_tyres.py
+      continue-on-error: true
 
     - name: Run 4tochki_disk.py
       run: python 4tochki_disk.py
+      continue-on-error: true
 
     - name: Run brinex_tyres.py
       run: python brinex_tyres.py
+      continue-on-error: true
 
     - name: Run brinex_disk.py
       run: python brinex_disk.py
+      continue-on-error: true
 
     - name: Run zapaska_gruz.py
       run: python zapaska_gruz.py
+      continue-on-error: true
 
     - name: Check for changes
       id: changes
+      if: always()
       run: |
         git add .
         if git diff-index --quiet HEAD; then
@@ -56,7 +64,7 @@ jobs:
         fi
 
     - name: Commit and push changes
-      if: steps.changes.outputs.has_changes == 'true'
+      if: always() && steps.changes.outputs.has_changes == 'true'
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
@@ -64,4 +72,4 @@ jobs:
         git pull --rebase
         git push
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
