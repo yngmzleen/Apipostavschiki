@@ -1,6 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
 import re
+import os
 
 api_url_rims = os.getenv('FORTOCHKI_D')
 if not api_url_rims:
