@@ -2,8 +2,9 @@ import requests
 import xml.etree.ElementTree as ET
 import re
 
-# URL API для получения данных
-api_url = "https://abcdisk54.ru/ftp/Brinex_shina.xml"
+api_url_rims = os.getenv('BRINEX_G')
+if not api_url_rims:
+    raise ValueError("Не установлена переменная окружения BRINEX_G с URL API")
 
 # Заголовки для запроса (если необходимо)
 headers = {
