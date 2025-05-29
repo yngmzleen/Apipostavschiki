@@ -47,6 +47,8 @@ jobs:
     - name: Run brinex_tyres.py
       run: python brinex_tyres.py
       continue-on-error: true
+      env:
+          BRINEX_T: ${{ BRINEX_T }}
 
     - name: Run brinex_disk.py
       run: python brinex_disk.py
