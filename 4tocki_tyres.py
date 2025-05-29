@@ -3,8 +3,8 @@ import xml.etree.ElementTree as ET
 import re
 import os
 
-api_url_rims = os.getenv('FORTOCHKI_T')
-if not api_url_rims:
+api_url = os.getenv('FORTOCHKI_T')
+if not api_url:
     raise ValueError("Не установлена переменная окружения FORTOCHKI_T с URL API")    
 
 # Заголовки для запроса (если необходимо)
