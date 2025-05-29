@@ -9,8 +9,9 @@ import json
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
-# URL API для получения данных о дисках
-api_url = "https://yngmzleen.github.io/drom/disks.xml"
+api_url_rims = os.getenv('ZAPASKA_D')
+if not api_url_rims:
+    raise ValueError("Не установлена переменная окружения ZAPASKA_D с URL API")
 
 # Заголовки для запроса (если необходимо)
 headers = {
