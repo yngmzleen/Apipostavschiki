@@ -27,6 +27,8 @@ jobs:
     - name: Run zapaska_tyres.py
       run: python zapaska_tyres.py
       continue-on-error: true
+      env:
+          ZAPASKA_T: ${{ secrets.ZAPASKA_T }}
 
     - name: Run zapaska_disk.py
       run: python zapaska_disk.py
@@ -62,7 +64,7 @@ jobs:
       run: python zapaska_gruz.py
       continue-on-error: true
       env:
-          ZAPASKA_D: ${{ secrets.ZAPASKA_G }}
+          ZAPASKA_G: ${{ secrets.ZAPASKA_G }}
 
     - name: Check for changes
       id: changes
