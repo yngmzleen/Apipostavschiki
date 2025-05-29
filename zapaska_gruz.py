@@ -9,8 +9,9 @@ import json
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
-# URL API для получения данных о шинах
-api_url = "https://yngmzleen.github.io/drom/tyres.xml"
+api_url_rims = os.getenv('ZAPASKA_T')
+if not api_url_rims:
+    raise ValueError("Не установлена переменная окружения ZAPASKA_T с URL API")
 
 # Заголовки для запроса (если необходимо)
 headers = {
