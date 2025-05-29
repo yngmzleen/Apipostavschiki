@@ -1,8 +1,8 @@
 import requests
 import xml.etree.ElementTree as ET
 
-api_url_rims = os.getenv('BRINEX_T')
-if not api_url_rims:
+api_url = os.getenv('BRINEX_T')
+if not api_url:
     raise ValueError("Не установлена переменная окружения BRINEX_T с URL API")
 
 # Заголовки для запроса (если необходимо)
