@@ -2,8 +2,9 @@ import requests
 import xml.etree.ElementTree as ET
 import re
 
-# URL API для получения данных о дисках
-api_url_rims = "https://b2b.4tochki.ru/export_data/M28244.xml"
+api_url_rims = os.getenv('FORTOCHKI_D')
+if not api_url_rims:
+    raise ValueError("Не установлена переменная окружения FORTOCHKI_D с URL API")
 
 # Заголовки для запроса (если необходимо)
 headers = {
