@@ -51,6 +51,8 @@ jobs:
     - name: Run brinex_disk.py
       run: python brinex_disk.py
       continue-on-error: true
+      env:
+          BRINEX_D: ${{ secrets.BRINEX_D }}
 
     - name: Run zapaska_gruz.py
       run: python zapaska_gruz.py
