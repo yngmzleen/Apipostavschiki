@@ -61,6 +61,8 @@ jobs:
     - name: Run zapaska_gruz.py
       run: python zapaska_gruz.py
       continue-on-error: true
+      env:
+          ZAPASKA_D: ${{ secrets.ZAPASKA_G }}
 
     - name: Check for changes
       id: changes
