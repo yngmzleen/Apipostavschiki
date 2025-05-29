@@ -9,9 +9,9 @@ import json
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
-api_url_rims = os.getenv('ZAPASKA_T')
+api_url_rims = os.getenv('ZAPASKA_G')
 if not api_url_rims:
-    raise ValueError("Не установлена переменная окружения ZAPASKA_T с URL API")
+    raise ValueError("Не установлена переменная окружения ZAPASKA_G с URL API")
 
 # Заголовки для запроса (если необходимо)
 headers = {
