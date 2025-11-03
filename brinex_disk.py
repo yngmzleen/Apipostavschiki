@@ -20,7 +20,7 @@ if not all([FTP_HOST, FTP_USER, FTP_PASS]):
 
 # Имя файла для скачивания
 INPUT_FILE = "Brinex_disk.xml"
-OUTPUT_FILE = "TEST.xml"
+OUTPUT_FILE = "brinex_disks.xml"
 
 # Маппинг полей для дисков
 FIELDS_MAPPING = {
