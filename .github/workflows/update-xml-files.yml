@@ -53,12 +53,20 @@ jobs:
       continue-on-error: true
       env:
           BRINEX_T: ${{ secrets.BRINEX_T }}
+          BRINEX_FTP_HOST: ${{ secrets.BRINEX_FTP_HOST }}
+          BRINEX_FTP_PORT: ${{ secrets.BRINEX_FTP_PORT }}
+          BRINEX_FTP_USER: ${{ secrets.BRINEX_FTP_USER }}
+          BRINEX_FTP_PASS: ${{ secrets.BRINEX_FTP_PASS }}
 
     - name: Run brinex_disk.py
       run: python brinex_disk.py
       continue-on-error: true
       env:
           BRINEX_D: ${{ secrets.BRINEX_D }}
+          BRINEX_FTP_HOST: ${{ secrets.BRINEX_FTP_HOST }}
+          BRINEX_FTP_PORT: ${{ secrets.BRINEX_FTP_PORT }}
+          BRINEX_FTP_USER: ${{ secrets.BRINEX_FTP_USER }}
+          BRINEX_FTP_PASS: ${{ secrets.BRINEX_FTP_PASS }}
 
     - name: Run zapaska_gruz.py
       run: python zapaska_gruz.py
